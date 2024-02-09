@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import { Jwt } from "jsonwebtoken";
+import  jwt  from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const userSchema = new Schema({
@@ -50,12 +50,14 @@ const userSchema = new Schema({
 }
 )
 
+//middlewares
 userSchema.pre("save",async function(next){
     if(!this.isModified("password")) return next();  
-    this.password = bcrypt.hash(this.password, 10)
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
+// methods for checking password or gentrate access token and refresh tokens using jwt bycrpt
 userSchema.methods.isPassword = async function(password){
     return await bcrypt.compare(password, this.password);
 }
@@ -83,4 +85,4 @@ userSchema.methods.generateRefreshToken = async function(){
     }
     )
 }
-export default User = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
